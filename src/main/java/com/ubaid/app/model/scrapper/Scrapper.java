@@ -1,229 +1,93 @@
 package com.ubaid.app.model.scrapper;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
-import org.jsoup.HttpStatusException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.util.Iterator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.ubaid.app.controller.Controller;
 import com.ubaid.app.model.object.NewProducts;
 import com.ubaid.app.model.object.Products;
 
 public class Scrapper implements ScrapperI
-{
-
-	int index = 0;
-	String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
-	String referral = "http://www.google.com";
-
-	String img_link = "Not Available";
-	
-	String baseURL = "";
-	
-	
-	public Scrapper(Document document, Controller controller) throws Exception
+{	
+	public Scrapper(String document, Controller controller) throws Exception
 	{		
 		try
 		{
-			
-			Elements product_divs = document.select("li.s-item");
-			String baseURl = document.baseUri();
-			
-			for(Element product : product_divs)
-			{
-				String name = "Not Available";
-				String product_link = "Not Available";
-				String product_price = "Not Available";
-				String product_name_in_english = "Not Available";
-				String brand = "Not Available";
-				String img_link = "Not Avaiable";
-				
 
-				
-				
-				
-				
+			String name = "Not Available";
+			String product_link = "Not Available";
+			String product_price = "Not Available";
+			String product_name_in_english = "Not Available";
+			String brand = "Not Available";
+			String img_link = "Not Avaiable";
+			String baseImageMediaURL = "http://ounass-prod2.atgcdn.ae/small_light(dw=586,of=webp,q=90)/pub/media/catalog/product";
+			
+			int price = -1;
+
+			JSONObject object = new JSONObject(document);
+			
+			JSONArray array = object.getJSONArray("hits");
+
+			Iterator<Object> _items = array.iterator();
+
+			while(_items.hasNext())
+			{
 				
 				try
 				{
-					Element _product_link = product.select("a.s-item__link").first();
-					product_link = _product_link.absUrl("href");
-				}
-				catch(Exception exp)
-				{
+					Object object2 = _items.next();
+					JSONObject obj = new JSONObject(object2.toString());
 					
-				}
+					price = obj.getInt("price");
+					name = obj.getString("name");
+					String _product_link = obj.getString("deepLink");
+					int index = _product_link.indexOf("https://en-saudi.ounass.com/");
+					int last_index = _product_link.lastIndexOf("&");
+					try
+					{
+						product_link = _product_link.substring(index, last_index);						
+					}
+					catch(IndexOutOfBoundsException exp)
+					{
+						product_link = _product_link;
+					}
+				
+					JSONArray media = obj.getJSONArray("media");
+					JSONObject _src = media.getJSONObject(0);
+					String partialURL = _src.getString("src");
+					img_link = baseImageMediaURL + partialURL;
+					
+					JSONObject analytics = obj.getJSONObject("analytics");
+					
+					String type = analytics.getString("productClass");
+					brand = analytics.getString("brand");
 
-				
-				
-				try
-				{
-					Element imgElement = product.getElementsByTag("img").first();
-					img_link = imgElement.absUrl("src");
-					String newImageLink = getImageLink(product_link, 0);
-					if(newImageLink != null)
-						img_link = newImageLink;
-				}
-				catch(Exception exp)
-				{
-					
-				}
+					product_price = Integer.toString(price);
+					assert(img_link != null);
+			
+					Products product_ = new NewProducts(name, product_name_in_english, product_link, img_link, product_price, "type", brand);
+					controller.getQueue().setIndex(product_.toString());
+					controller.setRecord(product_);
 
-							
-				try
-				{
-					Element _product_price = product.select(".s-item__price").first();
-					product_price = _product_price.text();
-				}
-				catch(Exception exp)
-				{
 					
 				}
-				
-				try
+				catch(JSONException | NullPointerException e)
 				{
-					
-					Element _name = product.select("h3.s-item__title").first();
-
-					name = _name.text();
+					e.printStackTrace();
 				}
-				catch(Exception exp)
-				{
-					exp.printStackTrace();
-				}
-				
-				String type = "Cell-Phone-Cases-Covers-Skins";
-
-				try
-				{
-					
-					type = getType(baseURl);
-				}
-				catch(Exception exp)
-				{
-					
-				}
-				
-					
-				
-				
-				Products product_ = new NewProducts(name, product_name_in_english, product_link, img_link, product_price, type, brand);
-				controller.getQueue().setIndex(product_.toString());
-				controller.setRecord(product_);
 			}
 			
-			
-		}
-		catch(Exception exp)
-		{
-			System.out.println(document.head());
-			exp.printStackTrace();
-			
-		}
-
-	}
-	
-		
-	public static void main(String [] args)
-	{
-		
-	}
-	
-	
-	private String getImageLink(String url, int counter)
-	{
-		
-		String imgLink = null;
-
-		if(counter > 4)
-			return imgLink;
-		
-		try
-		{
-			Document doc = Jsoup.connect(url).maxBodySize(0).userAgent(userAgent).referrer(referral).get();
-						
-			try
-			{
-				Elements images = doc.getElementsByAttributeValue("property", "og:image");
-				Element img_link = images.first();
-				imgLink = img_link.attr("content");
-			}
-			catch(NullPointerException exp)
-			{
-				
-			}
-		}
-		catch(HttpStatusException e1)
-		{
-			e1.printStackTrace();
-			try
-			{
-				Thread.sleep(10000);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-			
-			imgLink = getImageLink(url, ++counter);
-			
-		}
-		catch(SocketTimeoutException | UnknownHostException exp)
-		{
-			exp.printStackTrace();
-			try
-			{
-				Thread.sleep(1000);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-			
-			imgLink = getImageLink(url, ++counter);
-		}
-		catch(IOException exp)
-		{
-			exp.printStackTrace();
-			try
-			{
-				Thread.sleep(1000);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-			
-			imgLink = getImageLink(url, ++counter);
-			
+			assert(array != null);			
 		}
 		catch(Exception exp)
 		{
 			exp.printStackTrace();
-			return imgLink;
-		}
-		return imgLink;
-	}
-
-	
-	private static String getType(String url)
-	{
-		try
-		{
-			String[] words = url.split("/");
-			String actualWord = words[words.length - 3];
-			return actualWord;
-			
-		}
-		catch(Exception exp)
-		{
-			return "eBay";
 		}
 	}
-		
 }

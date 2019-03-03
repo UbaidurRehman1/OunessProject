@@ -37,6 +37,11 @@ public class Documents implements IDocument
 		int count = count(url);
 		List<String> urls = getURLs(url, count);
 		
+		for(int i = 0; i < urls.size(); i++)
+		{
+			addDocuments(urls.get(i));
+		}
+		
 	}
 	
 	private String getSpecialURL(String url)
@@ -152,7 +157,7 @@ public class Documents implements IDocument
 		Random random = new Random();
 		try
 		{
-			Document document = Jsoup.connect(url).maxBodySize(0).userAgent(userAgent).referrer(referral).get();
+			String document = Jsoup.connect(url).ignoreContentType(true).execute().body();
 			
 			try
 			{
