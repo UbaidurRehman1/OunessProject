@@ -67,7 +67,22 @@ public class AppHandler
 	private List<String> getURLList()
 	{
 		List<String> list = new ArrayList<>();
-		list.add("https://en-saudi.ounass.com/api/women/shoes/boots?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/new-in?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/clothing?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/shoes?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/bags?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/accessories?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/jewellery/fashion-jewellery?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/jewellery/fine-jewellery?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/beauty?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/home?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/sale??sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/edits/event-dressing?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/wedding-shop/standout-accessories?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/wedding-shop/bridal-shower?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/edits/the-vacation-shop?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/beauty/edits/the-big-day?sortBy=popularity-asc&facets=0&p=0");
+		list.add("https://en-saudi.ounass.com/api/women/gifts/home-adornments?sortBy=popularity-asc&facets=0&p=0");
 		return list;		
 	}
 	
