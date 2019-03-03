@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import com.ubaid.app.controller.Controller;
 import com.ubaid.app.model.scrapper.Scrapper;

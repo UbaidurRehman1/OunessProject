@@ -23,7 +23,7 @@ public class Controller
 	private static boolean isPause;
 	private ExecutorService service = Executors.newFixedThreadPool(1);
 	private Connection con;
-	private static final String query = "INSERT INTO products(name, nameE, productLink, imageLink, price, type, brand) VALUES(?, ?, ?, ?, ?, ?, ?)";
+	private static final String query = "INSERT INTO ouness(name, nameE, productLink, imageLink, price, type, brand) VALUES(?, ?, ?, ?, ?, ?, ?)";
 	private PreparedStatement statement;
 	//for test
 	public Controller()

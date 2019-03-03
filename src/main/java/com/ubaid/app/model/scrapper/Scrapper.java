@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.ubaid.app.controller.Controller;
 import com.ubaid.app.model.object.NewProducts;
 import com.ubaid.app.model.object.Products;
@@ -71,7 +69,7 @@ public class Scrapper implements ScrapperI
 					product_price = Integer.toString(price);
 					assert(img_link != null);
 			
-					Products product_ = new NewProducts(name, product_name_in_english, product_link, img_link, product_price, "type", brand);
+					Products product_ = new NewProducts(name, product_name_in_english, product_link, img_link, product_price, type, brand);
 					controller.getQueue().setIndex(product_.toString());
 					controller.setRecord(product_);
 
