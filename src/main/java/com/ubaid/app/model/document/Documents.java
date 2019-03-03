@@ -3,6 +3,7 @@ package com.ubaid.app.model.document;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -34,6 +35,7 @@ public class Documents implements IDocument
 		controller.getQueue().setIndex("First URL: " + url);		
 
 		int count = count(url);
+		List<String> urls = getURLs(url, count);
 		
 	}
 	
@@ -63,9 +65,21 @@ public class Documents implements IDocument
 		}		
 	}
 	
+	/**
+	 * 
+	 * @param url of requested page
+	 * @param count how many pages of this url
+	 * @return a list of urls of different subpages 
+	 */
 	private List<String> getURLs(String url, int count)
 	{
-		return null;
+		List<String> list = new ArrayList<String>();
+		url = url.substring(0, url.length() - 1);
+		for(int i = 0; i < count; i++)
+		{
+			list.add(url + i);
+		}
+		return list;
 	}
 	
 	
@@ -100,7 +114,7 @@ public class Documents implements IDocument
 			{
 				return null;
 			}
-			
+			e1.printStackTrace();
 			return getDoucument(url);
 
 		}
@@ -114,7 +128,7 @@ public class Documents implements IDocument
 			{
 
 			}
-			
+			exp.printStackTrace();
 			return getDoucument(url);
 
 		}
@@ -127,7 +141,7 @@ public class Documents implements IDocument
 			catch (InterruptedException e)
 			{
 			}	
-			
+			exp.printStackTrace();
 			return getDoucument(url);
 
 		}
@@ -142,7 +156,8 @@ public class Documents implements IDocument
 			
 			try
 			{
-				new Scrapper(document, controller);
+				if(document != null)
+					new Scrapper(document, controller);
 			}
 			catch (Exception e)
 			{
