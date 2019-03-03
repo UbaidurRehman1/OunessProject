@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Random;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,14 +42,25 @@ public class Documents implements IDocument
 		return url;
 	}
 	
-	
+	/**
+	 * 
+	 * @param url of the requested page
+	 * @return total number of pages of this url
+	 */
 	private int count(String url)
 	{
-		Document document = getDoucument(url);
-		
-		assert(document != null);
-		
-		return -1;
+		String document = getDoucument(url);
+		try
+		{
+			JSONObject object = new JSONObject(document);
+			JSONObject pagination = object.getJSONObject("pagination");
+			int count = pagination.getInt("totalPages");
+			return count;
+		}
+		catch(JSONException | NumberFormatException exp)
+		{
+			return -1;
+		}		
 	}
 	
 	private List<String> getURLs(String url, int count)
@@ -62,15 +75,20 @@ public class Documents implements IDocument
 		return null;
 	}
 	
-	private Document getDoucument(String url)
+	/**
+	 * 
+	 * @param url of the page
+	 * @return an stringly json got from the url
+	 */
+	private String getDoucument(String url)
 	{
 		Random random = new Random();
 
 		try
 		{
-			Document document = Jsoup.connect(url).maxBodySize(0).userAgent(userAgent).referrer(referral).get();			
-			return document;
-		
+			//getting json string from the url
+			String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
+			return json;		
 		}
 		catch(HttpStatusException e1)
 		{
